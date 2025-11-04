@@ -7,6 +7,7 @@
 #include <chrono>
 #include <string>
 #include <condition_variable>
+#include <atomic>
 
 using Clock = std::chrono::system_clock;
 using TimePoint = std::chrono::time_point<Clock>;
@@ -23,6 +24,8 @@ private:
     std::unordered_map<std::string, std::list<std::string>::iterator> keyPosition;
 
     std::mutex mutex;
+    
+    public:
     std::condition_variable cv;
     std::atomic<bool> running = true; 
 
