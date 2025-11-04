@@ -35,3 +35,8 @@ HISTORY name               # View all previous values
 DEL name                   # Manually delete
 KEYS                       # List all active keys
 EXIT                       # Quit program
+
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
