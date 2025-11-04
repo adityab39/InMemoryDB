@@ -4,6 +4,8 @@ A lightweight C++-based key-value store that mimics basic Redis functionality. I
 
 ---
 
+[![Build and Test](https://github.com/adityab39/InMemoryDB/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/adityab39/InMemoryDB/actions/workflows/c-cpp.yml)
+
 ## Features
 
 - LRU Cache (capacity: 100 keys)
