@@ -2,6 +2,7 @@
 #include <sstream>
 #include <thread>
 #include "store.h"
+#include <unistd.h>
 
 class TTLManager {
     Store& store;
@@ -33,8 +34,15 @@ int main() {
     std::cout << "  EXIT                   → Quit the program\n";
 
     while (true) {
-        std::cout << "> ";
-        std::getline(std::cin, input);
+
+        if (isatty(fileno(stdin))) {  
+            std::cout << "> ";
+        }
+
+        if (!std::getline(std::cin, input)) {
+            break;  
+        }
+
         std::istringstream ss(input);
         std::string command;
         ss >> command;
