@@ -37,7 +37,7 @@ private:
 public:
     void set(const std::string& key, const std::string& value);
     std::string get(const std::string& key);
-    void del(const std::string& key);
+    void del(const std::string& key, bool silent = false);
     void setTTL(const std::string& key, int seconds);
     void listKeys();
     void printHistory(const std::string& key);

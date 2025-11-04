@@ -81,12 +81,12 @@ clean: CMakeFiles/InMemoryDB.dir/clean
 CMakeFiles/InMemoryDB.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/InMemoryDB.dir/build.make CMakeFiles/InMemoryDB.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/InMemoryDB.dir/build.make CMakeFiles/InMemoryDB.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/adityabahulikar/Desktop/Projects/InMemoryDB/build/CMakeFiles --progress-num=1,2,3,4 "Built target InMemoryDB"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/adityabahulikar/Desktop/Projects/InMemoryDB/build/CMakeFiles --progress-num=1,2,3 "Built target InMemoryDB"
 .PHONY : CMakeFiles/InMemoryDB.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/InMemoryDB.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/adityabahulikar/Desktop/Projects/InMemoryDB/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/adityabahulikar/Desktop/Projects/InMemoryDB/build/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/InMemoryDB.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/adityabahulikar/Desktop/Projects/InMemoryDB/build/CMakeFiles 0
 .PHONY : CMakeFiles/InMemoryDB.dir/rule

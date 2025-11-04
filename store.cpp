@@ -2,66 +2,117 @@
 #include <iostream>
 
 void Store::set(const std::string& key, const std::string& value) {
-    std::lock_guard<std::mutex> lock(mutex);
+    std::unique_lock<std::mutex> lock(mutex);
+
+    if (data.find(key) == data.end() && data.size() >= maxSize) {
+        std::string lru = usageOrder.back();
+        usageOrder.pop_back();
+        keyPosition.erase(lru);
+        data.erase(lru);
+        expiry.erase(lru);
+        history.erase(lru);
+    }
+
     data[key] = value;
-    expiry.erase(key);
+    history[key].push_back(value);
+
+    if (keyPosition.find(key) != keyPosition.end()) {
+        usageOrder.erase(keyPosition[key]);
+    }
+    usageOrder.push_front(key);
+    keyPosition[key] = usageOrder.begin();
+
     std::cout << "OK\n";
 }
 
 std::string Store::get(const std::string& key) {
-    std::lock_guard<std::mutex> lock(mutex);
-    auto it = data.find(key);
-    if (it == data.end()) return "";
-    auto exp = expiry.find(key);
-    if (exp != expiry.end() && std::chrono::system_clock::now() > exp->second) {
-        data.erase(key);
-        expiry.erase(key);
+    std::unique_lock<std::mutex> lock(mutex);
+    if (data.find(key) == data.end()) return "";
+
+    if (expiry.count(key) && Clock::now() > expiry[key]) {
+        del(key);
         return "";
     }
-    return it->second;
+
+    usageOrder.erase(keyPosition[key]);
+    usageOrder.push_front(key);
+    keyPosition[key] = usageOrder.begin();
+
+    return data[key];
 }
 
 
-void Store::del(const std::string& key) {
-    std::lock_guard<std::mutex> lock(mutex);
+void Store::del(const std::string& key, bool silent) {
+    std::unique_lock<std::mutex> lock(mutex);
     data.erase(key);
     expiry.erase(key);
-    std::cout << "OK\n";
+    history.erase(key);
+
+    if (keyPosition.find(key) != keyPosition.end()) {
+        usageOrder.erase(keyPosition[key]);
+        keyPosition.erase(key);
+    }
+
+    if (!silent) {
+        std::cout << "OK\n";
+    }
 }
 
 
 void Store::setTTL(const std::string& key, int seconds) {
-    std::lock_guard<std::mutex> lock(mutex);
-    if (data.find(key) != data.end()) {
-        expiry[key] = std::chrono::system_clock::now() + std::chrono::seconds(seconds);
-        std::cout << "OK\n";
-    } else {
+    std::unique_lock<std::mutex> lock(mutex);
+    if (data.find(key) == data.end()) {
         std::cout << "Key does not exist.\n";
+        return;
     }
+
+    TimePoint expiryTime = Clock::now() + std::chrono::seconds(seconds);
+    expiry[key] = expiryTime;
+    expiryQueue.push({expiryTime, key});
+    cv.notify_one();
+    std::cout << "OK\n";
 }
-
-
-void Store::removeExpiredKeys() {
-    std::lock_guard<std::mutex> lock(mutex);
-    auto now = std::chrono::system_clock::now();
-    for (auto it = expiry.begin(); it != expiry.end(); ) {
-        if (now > it->second) {
-            data.erase(it->first);
-            it = expiry.erase(it);
-        } else {
-            ++it;
-        }
-    }
-}
-
 
 void Store::listKeys() {
-    std::lock_guard<std::mutex> lock(mutex);
-    for (const auto& pair : data) {
-        std::cout << pair.first << "\n";
+    std::unique_lock<std::mutex> lock(mutex);
+    if (data.empty()) {
+        std::cout << "No keys found.\n";
+        return;
+    }
+    for (const auto& [k, _] : data) {
+        std::cout << k << std::endl;  
     }
 }
 
-std::mutex& Store::getMutex() {
-    return mutex;
+void Store::printHistory(const std::string& key) {
+    std::unique_lock<std::mutex> lock(mutex);
+    if (!history.count(key)) {
+        std::cout << "No history found.\n";
+        return;
+    }
+    for (const auto& value : history[key]) {
+        std::cout << value << "\n";
+    }
+}
+
+
+
+void Store::ttlWatcher() {
+    while (true) {
+        std::unique_lock<std::mutex> lock(mutex);
+        if (expiryQueue.empty()) {
+            cv.wait(lock);
+        } else {
+            auto next = expiryQueue.top();
+            auto now = Clock::now();
+
+            if (now >= next.expireAt) {
+                expiryQueue.pop();
+                lock.unlock();
+                del(next.key, true);
+            } else {
+                cv.wait_until(lock, next.expireAt);
+            }
+        }
+    }
 }

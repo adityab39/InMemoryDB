@@ -177,30 +177,6 @@ store.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/InMemoryDB.dir/build.make CMakeFiles/InMemoryDB.dir/store.cpp.s
 .PHONY : store.cpp.s
 
-ttl_manager.o: ttl_manager.cpp.o
-.PHONY : ttl_manager.o
-
-# target to build an object file
-ttl_manager.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/InMemoryDB.dir/build.make CMakeFiles/InMemoryDB.dir/ttl_manager.cpp.o
-.PHONY : ttl_manager.cpp.o
-
-ttl_manager.i: ttl_manager.cpp.i
-.PHONY : ttl_manager.i
-
-# target to preprocess a source file
-ttl_manager.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/InMemoryDB.dir/build.make CMakeFiles/InMemoryDB.dir/ttl_manager.cpp.i
-.PHONY : ttl_manager.cpp.i
-
-ttl_manager.s: ttl_manager.cpp.s
-.PHONY : ttl_manager.s
-
-# target to generate assembly for a file
-ttl_manager.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/InMemoryDB.dir/build.make CMakeFiles/InMemoryDB.dir/ttl_manager.cpp.s
-.PHONY : ttl_manager.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -216,9 +192,6 @@ help:
 	@echo "... store.o"
 	@echo "... store.i"
 	@echo "... store.s"
-	@echo "... ttl_manager.o"
-	@echo "... ttl_manager.i"
-	@echo "... ttl_manager.s"
 .PHONY : help
 
 

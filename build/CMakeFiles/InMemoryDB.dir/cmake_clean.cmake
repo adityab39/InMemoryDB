@@ -3,8 +3,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/InMemoryDB.dir/main.cpp.o.d"
   "CMakeFiles/InMemoryDB.dir/store.cpp.o"
   "CMakeFiles/InMemoryDB.dir/store.cpp.o.d"
-  "CMakeFiles/InMemoryDB.dir/ttl_manager.cpp.o"
-  "CMakeFiles/InMemoryDB.dir/ttl_manager.cpp.o.d"
   "InMemoryDB"
   "InMemoryDB.pdb"
 )

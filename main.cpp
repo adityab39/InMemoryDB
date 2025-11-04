@@ -1,61 +1,76 @@
-#include<iostream>
-#include<sstream>
+#include <iostream>
+#include <sstream>
+#include <thread>
 #include "store.h"
-#include "ttl_manager.h"
 
+class TTLManager {
+    Store& store;
+    std::thread worker;
+public:
+    TTLManager(Store& s) : store(s) {}
+    void start() {
+        worker = std::thread([this]() { store.ttlWatcher(); });
+    }
+    void stop() {
+        if (worker.joinable()) worker.detach();
+    }
+};
 
-int main(){
+int main() {
     Store store;
-    TTLManager ttlManager(store);
-    ttlManager.start();
+    TTLManager ttl(store);
+    ttl.start();
 
     std::string input;
-    std::cout << "InMemoryDB – C++ Key-Value Store with TTL\n";
-    std::cout << "Type commands like: SET key value | GET key | DEL key | EXPIRE key seconds | KEYS | EXIT\n";
+    std::cout << "InMemoryDB – TTL, LRU, Versioned Key Store\n";
+    std::cout << "Available Commands:\n";
+    std::cout << "  SET <key> <value>      → Store a value\n";
+    std::cout << "  GET <key>              → Retrieve a value\n";
+    std::cout << "  DEL <key>              → Delete a key\n";
+    std::cout << "  EXPIRE <key> <seconds> → Auto-delete key after TTL\n";
+    std::cout << "  HISTORY <key>          → View all previous values\n";
+    std::cout << "  KEYS                   → List all active keys\n";
+    std::cout << "  EXIT                   → Quit the program\n";
 
-    while (true){
-        std ::cout << "> ";
+    while (true) {
+        std::cout << "> ";
         std::getline(std::cin, input);
-        if (!std::cin) {
-            std::cout << "\nDetected EOF. Exiting...\n";
-            break;
-        }
-
         std::istringstream ss(input);
         std::string command;
         ss >> command;
 
-        if(command == "SET"){
-            std :: string key,value;
+        if (command == "SET") {
+            std::string key, value;
             ss >> key >> value;
-            store.set(key,value);
-        }else if (command == "GET"){
-            std :: string key;
+            store.set(key, value);
+        } else if (command == "GET") {
+            std::string key;
             ss >> key;
-            std :: string result = store.get(key);
-            if(result.empty()){
-                std::cout << "NULL\n";
-            }else{
-                std::cout << result << "\n";
-            }
-        }else if (command == "DEL"){
-            std :: string key;
+            std::string result = store.get(key);
+            if (result.empty()) std::cout << "(null)\n";
+            else std::cout << result << "\n";
+        } else if (command == "DEL") {
+            std::string key;
             ss >> key;
-            store.del(key); 
-        }else if (command == "EXPIRE"){
-            std :: string key;
+            store.del(key);
+        } else if (command == "EXPIRE") {
+            std::string key;
             int seconds;
             ss >> key >> seconds;
-            store.setTTL(key,seconds);
-        }else if (command == "KEYS"){
+            store.setTTL(key, seconds);
+        } else if (command == "KEYS") {
             store.listKeys();
-        }else if (command == "EXIT"){
+        } else if (command == "HISTORY") {
+            std::string key;
+            ss >> key;
+            store.printHistory(key);
+        } else if (command == "EXIT") {
             break;
-        }else{
-            std :: cout << "Unknown command.\n";
+        } else {
+            std::cout << "Unknown command.\n";
         }
     }
 
-    ttlManager.stop();
+    ttl.stop();
     return 0;
-}   
+}
