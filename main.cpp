@@ -16,6 +16,11 @@ int main(){
     while (true){
         std ::cout << "> ";
         std::getline(std::cin, input);
+        if (!std::cin) {
+            std::cout << "\nDetected EOF. Exiting...\n";
+            break;
+        }
+
         std::istringstream ss(input);
         std::string command;
         ss >> command;
@@ -49,9 +54,8 @@ int main(){
         }else{
             std :: cout << "Unknown command.\n";
         }
-
-
-        ttlManager.stop()
-        return 0;
     }
+
+    ttlManager.stop();
+    return 0;
 }   
