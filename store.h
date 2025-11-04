@@ -5,6 +5,7 @@
 #include <queue>
 #include <mutex>
 #include <chrono>
+#include <string>
 #include <condition_variable>
 
 using Clock = std::chrono::system_clock;
