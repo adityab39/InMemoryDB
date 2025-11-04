@@ -24,6 +24,7 @@ private:
 
     std::mutex mutex;
     std::condition_variable cv;
+    std::atomic<bool> running = true; 
 
     struct ExpiryEntry {
         TimePoint expireAt;

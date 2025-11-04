@@ -98,10 +98,10 @@ void Store::printHistory(const std::string& key) {
 
 
 void Store::ttlWatcher() {
-    while (true) {
+    while (running) {  
         std::unique_lock<std::mutex> lock(mutex);
         if (expiryQueue.empty()) {
-            cv.wait(lock);
+            cv.wait_for(lock, std::chrono::seconds(1));  
         } else {
             auto next = expiryQueue.top();
             auto now = Clock::now();

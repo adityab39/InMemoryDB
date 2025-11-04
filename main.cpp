@@ -13,7 +13,7 @@ public:
         worker = std::thread([this]() { store.ttlWatcher(); });
     }
     void stop() {
-        if (worker.joinable()) worker.detach();
+        if (worker.joinable()) worker.join();
     }
 };
 
@@ -80,6 +80,8 @@ int main() {
         }
     }
 
+    store.running = false;   
+    store.cv.notify_all();
     ttl.stop();
     return 0;
 }
