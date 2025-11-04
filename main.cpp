@@ -65,7 +65,8 @@ int main() {
             ss >> key;
             store.printHistory(key);
         } else if (command == "EXIT") {
-            break;
+            std::cout << "Exiting InMemoryDB...\n";
+            break; 
         } else {
             std::cout << "Unknown command.\n";
         }
