@@ -20,7 +20,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install cmake -y
 
     - name: Create Build Directory
-      run: mkdir build
+      run: mkdir -p build
 
     - name: Run CMake
       run: cmake .
