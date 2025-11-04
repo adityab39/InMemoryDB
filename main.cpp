@@ -7,7 +7,7 @@
 int main(){
     Store store;
     TTLManager ttlManager(store);
-    ttlManager.start()
+    ttlManager.start();
 
     std::string input;
     std::cout << "InMemoryDB – C++ Key-Value Store with TTL\n";
@@ -16,7 +16,7 @@ int main(){
     while (true){
         std ::cout << "> ";
         std::getline(std::cin, input);
-        std::istringstream iss(input);
+        std::istringstream ss(input);
         std::string command;
         ss >> command;
 
