@@ -1,20 +1,37 @@
-# InMemoryDB – A C++-Based Key-Value Store with TTL Support
+# InMemoryDB – C++ In-Memory Key-Value Store
 
-This is a lightweight, terminal-based key-value store written in modern C++.
+A lightweight C++-based key-value store that mimics basic Redis functionality. It supports TTL-based auto-expiry, LRU eviction, versioned key history, and CLI command support — all built using C++ STL and multithreading.
+
+---
 
 ## Features
 
-- `SET key value` – Store a key-value pair
-- `GET key` – Retrieve a value
-- `DEL key` – Delete a key
-- `EXPIRE key seconds` – Auto-expire a key after X seconds
-- `KEYS` – List all current keys
-- `EXIT` – Exit the CLI
+- LRU Cache (capacity: 100 keys)
+- TTL (Time-To-Live) auto-expiry for keys using `std::priority_queue`
+- Versioned Key History – every `SET` stores previous values
+- Interactive CLI with simple commands
+- Multithreaded TTL watcher using condition variables
+- Thread-safe design using `std::mutex`
 
-## Build Instructions
+---
+
+## How It Works
+
+- Keys are stored in an in-memory unordered_map
+- When `EXPIRE` is called, TTL is pushed to a min-heap (priority queue)
+- A background thread (`ttlWatcher`) removes expired keys based on priority
+- A list + hashmap combo maintains Least Recently Used (LRU) eviction
+- Every value set is saved in a history map per key
+
+---
+
+## Sample Commands
 
 ```bash
-mkdir build && cd build
-cmake ..
-make
-./InMemoryDB
+SET name Aditya            # Store key-value pair
+GET name                   # Retrieve value
+EXPIRE name 5              # Auto-delete after 5 seconds
+HISTORY name               # View all previous values
+DEL name                   # Manually delete
+KEYS                       # List all active keys
+EXIT                       # Quit program
