@@ -12,9 +12,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Clean previous build
-      run: rm -rf build && mkdir build
 
     - name: Set up CMake
       run: sudo apt-get update && sudo apt-get install cmake -y
